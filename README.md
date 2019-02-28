@@ -31,3 +31,8 @@ func main() {
 	fmt.Println(endereco)
 }
 ```
+### Tests:
+
+```
+go test
+```
