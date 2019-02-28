@@ -54,5 +54,5 @@ func BuscaEndereco(cep string) (*Endereco, error) {
 		return nil, err
 	}
 
-	return nil, err
+	return endereco, err
 }
