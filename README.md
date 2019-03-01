@@ -17,7 +17,8 @@ import (
 )
 
 func main() {
-
+	
+	// Utilize um CEP com ou sem carateres especiais(Ex: 07748415-415)
 	endereco, err := goceps.BuscaEndereco("07748415")
 	if err != nil {
 		log.Fatal(err)
