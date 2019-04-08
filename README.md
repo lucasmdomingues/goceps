@@ -27,5 +27,5 @@ func main() {
 	fmt.Println(endereco)
 }
 ```
-### ReceitaWS
-https://www.receitaws.com.br/
+### Via CEP
+
