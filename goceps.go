@@ -2,43 +2,27 @@ package goceps
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
-type Endereco struct {
-	CEP         string `json:"cep"`
-	Logradouro  string `json:"logradouro"`
-	Complemento string `json:"complemento"`
-	Bairro      string `json:"bairro"`
-	Localidade  string `json:"localidade"`
-	UF          string `json:"uf"`
-	Unidade     string `json:"unidade"`
-	IBGE        string `json:"ibge"`
-	GIA         string `json:"gia"`
-}
-
-func BuscaEndereco(cep string) (*Endereco, error) {
-
-	url := fmt.Sprintf("http://viacep.com.br/ws/%s/json/", cep)
-
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
+func Search(zipcode string) (*Address, error) {
+	if strings.Contains(zipcode, "-") {
+		zipcode = strings.Replace(zipcode, "-", "", len(zipcode))
 	}
 
-	req.Header.Set("Content-type", "application/json")
-
-	client := &http.Client{}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
+	if len(zipcode) != 8 {
+		return nil, errors.New("Oops, zipcode must be 8 characters")
 	}
 
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Error: %s", resp.Status)
+	url := fmt.Sprintf("http://viacep.com.br/ws/%s/json/", zipcode)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return nil, err
 	}
 
 	defer resp.Body.Close()
@@ -47,12 +31,16 @@ func BuscaEndereco(cep string) (*Endereco, error) {
 		return nil, err
 	}
 
-	var endereco *Endereco
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("Oops, error on search address")
+	}
 
-	err = json.Unmarshal(body, &endereco)
+	var address *Address
+
+	err = json.Unmarshal(body, &address)
 	if err != nil {
 		return nil, err
 	}
 
-	return endereco, err
+	return address, err
 }

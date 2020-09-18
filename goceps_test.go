@@ -4,10 +4,10 @@ import (
 	"testing"
 )
 
-func TestBuscaEndereco(t *testing.T) {
-
-	_, err := BuscaEndereco("07748415-415")
+func TestSearch(t *testing.T) {
+	_, err := Search("01001-000")
 	if err != nil {
-		t.Error()
+		t.Error(err)
+		return
 	}
 }
