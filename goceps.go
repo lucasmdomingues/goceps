@@ -24,15 +24,15 @@ func Search(zipcode string) (*Address, error) {
 	if err != nil {
 		return nil, err
 	}
+	
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("Oops, error on search address")
+	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("Oops, error on search address")
 	}
 
 	var address *Address
