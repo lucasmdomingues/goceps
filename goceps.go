@@ -9,7 +9,17 @@ import (
 	"strings"
 )
 
-func Search(zipcode string) (*Address, error) {
+type service struct{}
+
+type Service interface {
+	Search(zipcode string) (*Address, error)
+}
+
+func NewService() Service {
+	return new(service)
+}
+
+func (s *service) Search(zipcode string) (*Address, error) {
 	if strings.Contains(zipcode, "-") {
 		zipcode = strings.Replace(zipcode, "-", "", len(zipcode))
 	}
@@ -24,7 +34,7 @@ func Search(zipcode string) (*Address, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, errors.New("Oops, error on search address")
 	}

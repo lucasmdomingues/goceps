@@ -17,7 +17,9 @@ import (
 )
 
 func main() {
-	address, err := goceps.Search("01001-000")
+	service := goceps.NewService()
+
+	_, err := service.Search("01001-000")
 	if err != nil {
 		log.Fatal(err)
 	}
