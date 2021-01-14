@@ -10,8 +10,12 @@ jobs:
       tag: "1.15"
     steps:
       - checkout
-      - run: go build
-      
+      - go/test:
+          covermode: atomic
+          failfast: true
+          race: true
+      - run: go build -o bin/covid-api .
+
 workflows:
   main:
     jobs:
