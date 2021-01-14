@@ -13,7 +13,7 @@ jobs:
       - go/test:
           verbose: true
           failfast: true
-      - run: go build -o bin/covid-api .
+      - run: go build -o bin/goceps .
 
 workflows:
   build_and_test:
