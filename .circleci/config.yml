@@ -11,9 +11,8 @@ jobs:
     steps:
       - checkout
       - go/test:
-          covermode: atomic
+          verbose: true
           failfast: true
-          race: true
       - run: go build -o bin/covid-api .
 
 workflows:
