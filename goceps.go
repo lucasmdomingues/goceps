@@ -3,46 +3,64 @@ package goceps
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
+	"net/url"
+	"path"
+	"regexp"
 )
 
-type service struct{}
+type service struct {
+	BaseURL url.URL
+}
 
 type Service interface {
 	Search(zipcode string) (*Address, error)
 }
 
 func NewService() Service {
-	return new(service)
+	return &service{
+		BaseURL: url.URL{
+			Scheme: "https",
+			Host:   "viacep.com.br",
+			Path:   "ws/",
+		},
+	}
 }
 
 func (s *service) Search(zipcode string) (*Address, error) {
-	if strings.Contains(zipcode, "-") {
-		zipcode = strings.Replace(zipcode, "-", "", len(zipcode))
-	}
+	exp := regexp.MustCompile(`[^0-9]`)
+	zipcode = exp.ReplaceAllString(zipcode, "")
 
 	if len(zipcode) != 8 {
-		return nil, errors.New("Oops, zipcode must be 8 characters")
+		return nil, errors.New("zipcode must be 8 characters")
 	}
 
-	url := fmt.Sprintf("http://viacep.com.br/ws/%s/json/", zipcode)
-
-	resp, err := http.Get(url)
+	url, err := s.BaseURL.Parse(path.Join(zipcode, "json"))
 	if err != nil {
 		return nil, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("Oops, error on search address")
+	resp, err := http.Get(url.String())
+	if err != nil {
+		return nil, err
 	}
 
-	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var addressError *AddressError
+
+	err = json.Unmarshal(body, &addressError)
+	if err != nil {
+		return nil, err
+	}
+
+	if addressError.HaveError {
+		return nil, errors.New("zipcode not found or invalid")
 	}
 
 	var address *Address

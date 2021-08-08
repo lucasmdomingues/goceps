@@ -12,3 +12,7 @@ type Address struct {
 	DDD          string `json:"ddd"`
 	Siafi        string `json:"siafi"`
 }
+
+type AddressError struct {
+	HaveError bool `json:"erro"`
+}
