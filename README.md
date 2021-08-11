@@ -4,27 +4,12 @@
 go get github.com/lucasmdomingues/goceps
 ```
 
-### Example
-
-```go
-package main
-
-import (
-	"fmt"
-	"log"
-
-	"github.com/lucasmdomingues/goceps"
-)
-
-func main() {
-	service := goceps.NewService()
-
-	_, err := service.Search("01001-000")
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-```
-### Via CEP
+## Via CEP
 https://viacep.com.br/
+
+## Content
+
+### Search address
+
+* By zipcode
 
